@@ -14,6 +14,9 @@ export default function UserPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [web3, setWeb3] = useState<Web3>();
+  const [posts, setPosts] = useState<
+    { title: string; content: string; date: string }[]
+  >([]);
   const [myStatus, setMyStatus] = useState({
     postingCount: 0,
     rewardTotal: "0",
@@ -23,31 +26,22 @@ export default function UserPage() {
     badge2: 0,
   });
 
-
-
-
   const {
-    UserABIContract,
-    STKTokenABIContract,
-    BadgeABIContract,
-    userContract,
-    stkTokenContract,
-    badgeNFTContract,
+    userContract
   } = getContract();
 
   useEffect(() => {
     if (window.ethereum) {
       const instance = new Web3(window.ethereum);
       setWeb3(instance);
-    } else {
-      ;
     }
   }, []);
 
   useEffect(() => {
-    console.log(myStatus);
+    console.log("현재 등급:", myStatus.grade);
+  }, [myStatus]);
 
-  }, [myStatus])
+
 
   const connectWallet = async () => {
     const accounts = await window.ethereum.request({
@@ -58,16 +52,28 @@ export default function UserPage() {
     await getMyStatus();
   };
 
-  const handlePostSubmit = () => {
+  const handlePostSubmit = async () => {
     if (!title || !content) return alert("제목과 내용을 입력해주세요!");
+    if (!web3 || !account) return alert("지갑이 연결되지 않았습니다!");
+
+    const writepay = web3.utils.toWei("0.5", "ether");
+
+    await userContract.methods
+      .writePostings(title, content)
+      .send({
+        from: account,
+        value: writepay,
+      });
+
     const newPost = {
       title,
       content,
       date: new Date().toLocaleString(),
     };
-    // setPosts([newPost, ...posts]);
+    setPosts([newPost, ...posts]);
     setTitle("");
     setContent("");
+    alert("0.5 ETH 결제 및 글 작성이 완료되었습니다!");
   };
 
   const getMyStatus = async () => {
@@ -85,14 +91,12 @@ export default function UserPage() {
 
       setMyStatus({
         postingCount: Number(result.postingCount),
-        rewardTotal: Number(result.rewardTotal).toString(), // 문자열로 변환
+        rewardTotal: web3.utils.fromWei(result.rewardTotal.toString(), "ether"),
         grade: result.grade,
         badge0: Number(result.badge0),
         badge1: Number(result.badge1),
         badge2: Number(result.badge2),
       });
-
-
 
     } catch (error) {
       console.error("getMyStatus error:", error);
@@ -105,15 +109,14 @@ export default function UserPage() {
 
         <div className="grid grid-cols-2 gap-6 items-start">
           <div>
-            <p className="text-sm text-gray-700 mb-2">지갑 주소: {account}</p>
+            <p className="text-base text-gray-700 mb-2">지갑 주소: {account}</p>
             <div className="">
               <button onClick={connectWallet} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl shadow">
                 🦊 wallet Connect
               </button>
-
-              <button onClick={getMyStatus} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl shadow">
+              {/* <button onClick={getMyStatus} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl shadow">
                 정보 불러오기
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -124,7 +127,7 @@ export default function UserPage() {
             </div>
             <div className="bg-white p-4 rounded-2xl shadow-md">
               <p className="text-sm text-gray-500">보유 STK</p>
-              <p className="text-xl font-bold text-green-600">{myStatus.rewardTotal} STK</p>
+              <p className="text-xl font-bold text-green-600">{myStatus.rewardTotal}STK</p>
             </div>
             <div className="bg-white p-4 rounded-2xl shadow-md">
               <p className="text-sm text-gray-500">등급</p>
@@ -138,15 +141,15 @@ export default function UserPage() {
           <h2 className="text-lg font-bold mb-4 text-gray-800">My Badge</h2>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold">🥈 GOOD</p>
+              <p className="text-base font-semibold"> GOOD</p>
               <p className="text-xl font-bold text-blue-600 mt-1">{myStatus.badge0}개</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold">🥇 BEST</p>
+              <p className="text-base font-semibold"> BEST</p>
               <p className="text-xl font-bold text-yellow-500 mt-1">{myStatus.badge1}개</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold">🏆 EXCELLENT</p>
+              <p className="text-base font-semibold">EXCELLENT</p>
               <p className="text-xl font-bold text-purple-600 mt-1">{myStatus.badge2}개</p>
             </div>
           </div>
@@ -183,13 +186,13 @@ export default function UserPage() {
         <div className="bg-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">list</h2>
           <ul className="space-y-4">
-            {/* {posts.map((post, idx) => (
+            {posts.map((posts, idx) => (
               <li key={idx} className="border p-4 rounded-xl shadow-sm bg-gray-50">
-                <p className="font-semibold text-gray-700">제목: {post.title}</p>
-                <p className="text-sm text-gray-600">내용: {post.content}</p>
-                <p className="text-xs text-gray-400 mt-1">작성일: {post.date}</p>
-              </li> */}
-            {/* ))} */}
+                <p className="font-semibold text-gray-700">제목: {posts.title}</p>
+                <p className="text-sm text-gray-600">내용: {posts.content}</p>
+                <p className="text-xs text-gray-400 mt-1">작성일: {posts.date}</p>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

@@ -113,9 +113,9 @@ function TokenInfo() {
 function UserInfo() {
     const [approved, setApproved] = useState({});
 
-    const handleApprove = (address) => {
-        setApproved((prev) => ({ ...prev, [address]: true }));
-    };
+    // const handleApprove = (address) => {
+    //     setApproved((prev) => ({ ...prev, [address]: true }));
+    // };
 
     return (
         <>
@@ -137,7 +137,7 @@ function UserInfo() {
                                 <td className="py-2 px-4">{user.posts}</td>
                                 <td className="py-2 px-4 font-semibold">{user.rank}</td>
                                 <td className="py-2 px-4">
-                                    {approved[user.address] ? (
+                                    {/* {approved[user.address] ? (
                                         <span className="text-green-600 font-semibold">승인 완료</span>
                                     ) : (
                                         <button
@@ -146,7 +146,7 @@ function UserInfo() {
                                         >
                                             멤버 승인
                                         </button>
-                                    )}
+                                    )} */}
                                 </td>
                             </tr>
                         ))}
