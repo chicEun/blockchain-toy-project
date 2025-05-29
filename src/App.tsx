@@ -116,6 +116,7 @@ export default function UserPage() {
     try {
       const results = await userContract.methods.getPostings().call({ from: account });
       if (!results) return;
+
       const parsedPosts = results.map((post: any) => ({
         title: post.title,
         content: post.content,
@@ -167,15 +168,15 @@ export default function UserPage() {
           <h2 className="text-lg font-bold mb-4 text-gray-800">My Badge</h2>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold"> GOOD</p>
+              <p className="text-base font-semibold"><img src='https://ipfs.io/ipfs/bafybeibnyfgu6jx2urnuhwakuglxuramuuc4p4mvzaq7wqewrggkfwad2u/0.png' ></img> GOOD</p>
               <p className="text-xl font-bold text-blue-600 mt-1">{myStatus.badge0}개</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold"> BEST</p>
+              <p className="text-base font-semibold"><img src='https://ipfs.io/ipfs/bafybeibnyfgu6jx2urnuhwakuglxuramuuc4p4mvzaq7wqewrggkfwad2u/1.png'></img> BEST</p>
               <p className="text-xl font-bold text-yellow-500 mt-1">{myStatus.badge1}개</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-xl shadow-sm">
-              <p className="text-base font-semibold">EXCELLENT</p>
+              <p className="text-base font-semibold"><img src='https://ipfs.io/ipfs/bafybeibnyfgu6jx2urnuhwakuglxuramuuc4p4mvzaq7wqewrggkfwad2u/2.png'></img>EXCELLENT</p>
               <p className="text-xl font-bold text-purple-600 mt-1">{myStatus.badge2}개</p>
             </div>
           </div>
