@@ -15,7 +15,7 @@ export default function UserPage() {
   const [content, setContent] = useState("");
   const [web3, setWeb3] = useState<Web3>();
   const [posts, setPosts] = useState<
-    { title: string; content: string; date: string }[]
+    { title: string; content: string; date: string; }[]
   >([]);
   const [myStatus, setMyStatus] = useState({
     postingCount: 0,
@@ -41,6 +41,13 @@ export default function UserPage() {
     console.log("현재 등급:", myStatus.grade);
   }, [myStatus]);
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      await getPostings(); // ✅ 비동기 호출 보장
+    };
+    fetchPosts();
+  }, [account, web3, userContract]);
+
 
 
   const connectWallet = async () => {
@@ -50,6 +57,7 @@ export default function UserPage() {
     const selectedAddress = accounts[0];
     setAccount(selectedAddress);
     await getMyStatus();
+    await getPostings();
   };
 
   const handlePostSubmit = async () => {
@@ -73,7 +81,6 @@ export default function UserPage() {
     setPosts([newPost, ...posts]);
     setTitle("");
     setContent("");
-    alert("0.5 ETH 결제 및 글 작성이 완료되었습니다!");
   };
 
   const getMyStatus = async () => {
@@ -102,6 +109,25 @@ export default function UserPage() {
       console.error("getMyStatus error:", error);
     }
   };
+
+  const getPostings = async () => {
+    if (!web3 || !account || !userContract) return;
+
+    try {
+      const results = await userContract.methods.getPostings().call({ from: account });
+      if (!results) return;
+      const parsedPosts = results.map((post: any) => ({
+        title: post.title,
+        content: post.content,
+        date: new Date(Number(post.timestamp) * 1000).toLocaleString(),
+      }));
+
+      setPosts(parsedPosts.reverse()); // 최신순 정렬
+    } catch (error) {
+      console.error("getMyPostings error:", error);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -182,7 +208,7 @@ export default function UserPage() {
           </div>
         </div>
 
-        {/* 📋 작성 글 목록 */}
+        {/* 작성 글 목록 */}
         <div className="bg-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">list</h2>
           <ul className="space-y-4">
