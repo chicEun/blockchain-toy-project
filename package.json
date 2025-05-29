@@ -22,8 +22,10 @@
     "openzeppelin": "^1.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.1",
     "solc": "^0.8.30",
     "truffle": "^5.11.5",
+    "url": "^0.11.4",
     "web3-utils": "^4.3.3"
   },
   "devDependencies": {
