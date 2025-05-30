@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import getContract from './recycle/getContract';
 import Web3 from 'web3';
 
-
 declare global {
   interface Window {
     ethereum?: any;
@@ -50,7 +49,9 @@ export default function UserPage() {
     fetchPosts();
   }, [account, web3, userContract]);
 
-
+  useEffect(() => {
+    console.log("adminAddress:", import.meta.env.VITE_ADMINADDRESS);
+  }, []);
 
   const connectWallet = async () => {
     const accounts = await window.ethereum.request({
@@ -135,7 +136,7 @@ export default function UserPage() {
     if (!account) {
       return alert("지갑을 먼저 연결해주세요.");
     }
-    const adminAddress = import.meta.env.ADMINADDRESS;
+    const adminAddress = import.meta.env.VITE_ADMINADDRESS;
     if (account.toLowerCase() !== adminAddress.toLowerCase()) {
       return alert("관리자만 접근 가능합니다.");
     }
