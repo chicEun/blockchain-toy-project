@@ -5,9 +5,9 @@ import BadgeABI from "../../truffle/build/contracts/BadgeNFT.json";
 import STKTokenABI from "../../truffle/build/contracts/STKToken.json";
 
 const getContract = () => {
-    const UserABIContract = '0xF77B8DAA634f3BdFB7b422b4f804aad932913A9D';
-    const STKTokenABIContract = '0x18c0A0C4bE9B1BaC1367031193fb9eE0942Cf43A';
-    const BadgeABIContract = '0x0B207190510c64209b52F887e143Fd224b543453';
+    const UserABIContract = import.meta.env.VITE_USER_CONTRACT;
+    const STKTokenABIContract = import.meta.env.VITE_STK_TOKEN_CONTRACT;
+    const BadgeABIContract = import.meta.env.VITE_BADGE_NFT_CONTRACT;
 
     const web3 = new Web3(window.ethereum);
 

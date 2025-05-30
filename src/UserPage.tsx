@@ -45,7 +45,7 @@ export default function UserPage() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      await getPostings(); // ✅ 비동기 호출 보장
+      await getPostings();
     };
     fetchPosts();
   }, [account, web3, userContract]);
@@ -125,27 +125,22 @@ export default function UserPage() {
         date: new Date(Number(post.timestamp) * 1000).toLocaleString(),
       }));
 
-      setPosts(parsedPosts.reverse()); // 최신순 정렬
+      setPosts(parsedPosts.reverse());
     } catch (error) {
       console.error("getMyPostings error:", error);
     }
   };
 
-
-
   const handleAdmin = async () => {
     if (!account) {
       return alert("지갑을 먼저 연결해주세요.");
     }
-    const adminAddress = "0x67b64dd918453e7ca40a8f62278308bc020b78cb";
+    const adminAddress = import.meta.env.ADMINADDRESS;
     if (account.toLowerCase() !== adminAddress.toLowerCase()) {
       return alert("관리자만 접근 가능합니다.");
     }
     Navigate("/admin");
   };
-
-
-
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
